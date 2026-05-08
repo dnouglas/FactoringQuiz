@@ -128,8 +128,7 @@ public class IntroScreen extends JComponent implements ActionListener {
      */
     protected void fireActionPerformed() {
         ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "startQuiz");
-        for (ActionListener listener : actionListeners) {
+        for (ActionListener listener : actionListeners)
             listener.actionPerformed(event);
-        }
     }
 }

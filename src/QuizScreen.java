@@ -126,8 +126,8 @@ public class QuizScreen extends JComponent implements ActionListener {
 			lblArrQStatus[i].setForeground(Color.BLACK);
 			
 			pnlQuestionBar.add(lblArrQStatus[i]);
-			
 		}
+
 		lblArrQStatus[0].setFont(new Font(Font.SANS_SERIF, Font.BOLD, 25));
 		
 		lblQuestion.setText("Question " + this.currentQuestionNum);
@@ -256,7 +256,16 @@ public class QuizScreen extends JComponent implements ActionListener {
 			return;
 		}
 
-		boolean isCorrect = ans.contains(userAns);
+		boolean isCorrect = false;
+        String ansCopy = ans;
+        // Recall that ans is a String containing all accepted answers, separated by a comma and a space --> ", "
+        while (ansCopy.indexOf(", ") != -1) {
+            if (ansCopy.substring(0, ansCopy.indexOf(", ")).equals(userAns)) {
+                isCorrect = true;
+                break;
+            }
+            ansCopy = ansCopy.substring(ans.indexOf(", ") + 2);
+        }
 			
 		//answer is either right or wrong, either way the following must happen to move to next Question:
 		btnNextQ.setVisible(true);
@@ -332,8 +341,7 @@ public class QuizScreen extends JComponent implements ActionListener {
      */
     protected void fireActionPerformed() {
         ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "endQuiz"); 
-        for (ActionListener listener : actionListeners) {
+        for (ActionListener listener : actionListeners)
             listener.actionPerformed(event);
-        }
     }
 }

@@ -76,27 +76,27 @@ public class SummaryScreen extends JComponent implements ActionListener {
 		 */
 		lblScore.setText(String.format("Score: %.2f%%", (double)numCorrect/this.quizSummary.length*100));
 		
-		this.questionNum = 2;
-		this.toggleSummaryScreen(false);
+		this.goToQuestion(1);
     }
 
     /**
-	 * Controls for the toggle buttons on the summary screen.
-	 * @param nextQ - true indicates next question, false indicates previous question.
-	 */
-	private void toggleSummaryScreen(boolean nextQ) {
-		if (nextQ && this.questionNum != this.quizSummary.length)
-			lblQuesNav.setText("Question " + (++this.questionNum));
-		else if (!nextQ && this.questionNum != 1)
-			lblQuesNav.setText("Question " + (--this.questionNum));
-		else return;
-		
-		String possAns = quizSummary[this.questionNum-1][1];
-		taStats.setText(quizSummary[this.questionNum-1][0] + 
-				"\n\nCorrect Answers: " + possAns.substring(0, possAns.indexOf(",  , ")) +
-				"\nYour Answer: " + quizSummary[this.questionNum-1][2] + 
-				"\n\n" + quizSummary[this.questionNum-1][3]);
-	}
+     * Updates the summary screen to display the information for a specified question number.
+     * @param questionNum - the number of the question to be displayed on the summary screen.
+     */
+    private void goToQuestion(int questionNum) {
+        if (questionNum < 1 || questionNum > quizSummary.length)
+            return;
+
+        this.questionNum = questionNum;
+
+        lblQuesNav.setText("Question " + this.questionNum);
+
+        String possAns = quizSummary[this.questionNum-1][1];
+        taStats.setText(quizSummary[this.questionNum-1][0] + 
+                "\n\nCorrect Answers: " + possAns.substring(0, possAns.indexOf(",  , ")) +
+                "\nYour Answer: " + quizSummary[this.questionNum-1][2] + 
+                "\n\n" + quizSummary[this.questionNum-1][3]);
+    }
 
     /**
      * Event handler for the buttons in the summary screen. 
@@ -110,9 +110,9 @@ public class SummaryScreen extends JComponent implements ActionListener {
         if (btnPressed == btnRestartQuiz) 
 			this.fireActionPerformed();
 		else if (btnPressed == btnNext)
-			this.toggleSummaryScreen(true);
+			this.goToQuestion(questionNum+1);
 		else if (btnPressed == btnPrev)
-			this.toggleSummaryScreen(false);
+			this.goToQuestion(questionNum-1);
     }
     
     /*
@@ -141,8 +141,7 @@ public class SummaryScreen extends JComponent implements ActionListener {
      */
     protected void fireActionPerformed() {
         ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "restartQuiz");
-        for (ActionListener listener : actionListeners) {
+        for (ActionListener listener : actionListeners)
             listener.actionPerformed(event);
-        }
     }
 }
