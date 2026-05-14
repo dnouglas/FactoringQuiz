@@ -4,15 +4,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 public class SummaryScreen extends JComponent implements ActionListener {
-    /* 2D array that will contain data that summarizes the quiz
-	 * there will be numQs rows, which represents numQs questions 
-	 * 4 columns:
-	 * 	column (index) 0 contains the actual questions, 
-	 * 	column 1 contains possible correct answers for each question, 
-	 * 	column 2 contains what the user answered, 
-	 *	column 3 contains the response status (user answer correctly or incorrectly?)
-	 */
-	private String[][] quizSummary;
+	private ArrayList<QuadraticProblem> questions;
 
     // Number of the question currently being displayed on the summary screen
     private int questionNum;
@@ -62,19 +54,19 @@ public class SummaryScreen extends JComponent implements ActionListener {
      * Calculates the user's score and sets up the initial display for the summary screen.
      * @param quizSummary
      */
-    public void initSummaryScreen(String[][] quizSummary) {
-        this.quizSummary = quizSummary;
+    public void initSummaryScreen(ArrayList<QuadraticProblem> questions) {
+        this.questions = questions;
 
         int numCorrect = 0;
-        for (String[] question : quizSummary) {
-            if (question[1].contains(question[2]))
+        for (QuadraticProblem question : this.questions) {
+            if (question.checkProposedFactorization())
                 numCorrect++;
         }
 
         /*formatted percentage score to prevent repeating/long decimal sequences
 		 * ex. if there are 3 questions and 2 were correct, 66.67 will be outputted instead of 66.666...
 		 */
-		lblScore.setText(String.format("Score: %.2f%%", (double)numCorrect/this.quizSummary.length*100));
+		lblScore.setText(String.format("Score: %.2f%%", (double)numCorrect/this.questions.size()*100));
 		
 		this.goToQuestion(1);
     }
@@ -84,18 +76,19 @@ public class SummaryScreen extends JComponent implements ActionListener {
      * @param questionNum - the number of the question to be displayed on the summary screen.
      */
     private void goToQuestion(int questionNum) {
-        if (questionNum < 1 || questionNum > quizSummary.length)
+        if (questionNum < 1 || questionNum > this.questions.size())
             return;
 
         this.questionNum = questionNum;
+        QuadraticProblem question = this.questions.get(this.questionNum-1);
 
         lblQuesNav.setText("Question " + this.questionNum);
 
-        String possAns = quizSummary[this.questionNum-1][1];
-        taStats.setText(quizSummary[this.questionNum-1][0] + 
-                "\n\nCorrect Answers: " + possAns.substring(0, possAns.indexOf(",  , ")) +
-                "\nYour Answer: " + quizSummary[this.questionNum-1][2] + 
-                "\n\n" + quizSummary[this.questionNum-1][3]);
+        ArrayList<String> answers = question.getAcceptedFactorizations();
+        taStats.setText(question.getQuestion() + 
+                "\n\nCorrect Answers: " + answers.get(0) + " ," + answers.get(1) +
+                "\nYour Answer: " + question.getProposedFactorization() + 
+                "\n\n" + (question.checkProposedFactorization() ? "Correct!" : "Incorrect."));
     }
 
     /**

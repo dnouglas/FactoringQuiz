@@ -20,7 +20,7 @@ public class FactoringQuiz extends JFrame implements ActionListener {
 		this.setSize(700, 500);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setTitle("Factoring Quadratics Quiz");
-		this.setResizable(false);
+		this.setResizable(true);
 
 		// Action listeners for switching between screens
 		introScreen.addActionListener(this);
